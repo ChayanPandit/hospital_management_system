@@ -95,7 +95,9 @@ export class AddSchedule extends Component {
 
                           fetch("http://localhost:3001/addToschedule?id=" + 
                           id + "&starttime=" + st + "&endtime=" + 
-                          et + "&breaktime=" + bt + "&day=" + value.day)
+                          et + "&breaktime=" + bt + "&day=" + value.day).then((x)=>{
+                            window.alert("Schedule successfully updated!");
+                          });
                           });
 
                     }}>

@@ -76,8 +76,8 @@ app.get('/makeAccount', (req, res) => {
   if(surgeries===undefined){
     surgeries="none"
   }
-  let sql_statement = `INSERT INTO Patient (email, password, name, address, gender) 
-                       VALUES ` + `("${email}", "${password}", "${name}", "${address}", "${gender}")`;
+  let sql_statement = `INSERT INTO Patient (email, password, name, address, gender, conditions, surgeries, medication) 
+                       VALUES ` + `("${email}", "${password}", "${name}", "${address}", "${gender}", "${conditions}", "${surgeries}", "${medications}")`;
   console.log(sql_statement);
   con.query(sql_statement, function (error, results, fields) {
     if (error) throw error;
@@ -88,29 +88,6 @@ app.get('/makeAccount', (req, res) => {
       return res.json({
         data: results
       })
-    };
-  });
-  sql_statement='SELECT id FROM MedicalHistory ORDER BY id DESC LIMIT 1;';
-  console.log(sql_statement)
-  con.query(sql_statement, function (error, results, fields) {
-    if (error) throw error;
-    else {
-      let generated_id = results[0].id + 1;
-      let sql_statement = `INSERT INTO MedicalHistory (id, date, conditions, surgeries, medication) 
-      VALUES ` + `("${generated_id}", curdate(), "${conditions}", "${surgeries}", "${medications}")`;
-      console.log(sql_statement);
-      con.query(sql_statement, function (error, results, fields) {
-        if (error) throw error;
-        else {
-          let sql_statement = `INSERT INTO PatientsFillHistory (patient, history) 
-          VALUES ` + `("${email}",${generated_id})`;
-          console.log(sql_statement);
-          con.query(sql_statement, function (error, results, fields) {
-            if (error) throw error;
-            else {};
-          });
-        };
-      });
     };
   });
 });
@@ -379,9 +356,8 @@ app.get('/OneHistory', (req, res) => {
   let params = req.query;
   let email = params.patientEmail;
   let statement = `SELECT gender,name,email,address,conditions,surgeries,medication
-                    FROM PatientsFillHistory,Patient,MedicalHistory
-                    WHERE PatientsFillHistory.history=id
-                    AND patient=email AND email = ` + email;
+                    FROM Patient
+                    WHERE email = ` + email;
   console.log(statement);
   con.query(statement, function (error, results, fields) {
     if (error) throw error;
@@ -399,10 +375,8 @@ app.get('/MedHistView', (req, res) => {
   let patientName = "'%" + params.name + "%'";
   let secondParamTest = "" + params.variable;
   let statement = `SELECT name AS 'Name',
-                    PatientsFillHistory.history AS 'ID',
-                    email FROM Patient,PatientsFillHistory
-                    WHERE Patient.email = PatientsFillHistory.patient
-                    AND Patient.email IN (SELECT patient from PatientsAttendAppointments 
+                    email FROM Patient
+                    WHERE Patient.email IN (SELECT patient from PatientsAttendAppointments 
                     NATURAL JOIN Diagnose WHERE doctor="${email_in_use}")`;
   if (patientName != "''")
     statement += " AND Patient.name LIKE " + patientName
@@ -443,21 +417,7 @@ app.get('/patientViewAppt', (req, res) => {
   });
 });
 
-//Checks if history exists
-app.get('/checkIfHistory', (req, res) => {
-    let params = req.query;
-    let email = params.email;
-    let statement = "SELECT patient FROM PatientsFillHistory WHERE patient = " + email;
-    console.log(statement)
-    con.query(statement, function (error, results, fields) {
-        if (error) throw error;
-        else {
-            return res.json({
-                data: results
-            })
-        };
-    });
-});
+
 
 //Adds to PatientsAttendAppointment Table
 app.get('/addToPatientSeeAppt', (req, res) => {
@@ -561,6 +521,13 @@ app.get('/genApptUID', (req, res) => {
   con.query(statement, function (error, results, fields) {
     if (error) throw error;
     else {
+      console.log("HOOIIII");
+      console.log(results);
+      console.log(results.length);
+      if(results.length==0)
+      {
+        return res.json({ id: 1});
+      }
       let generated_id = results[0].id + 1;
       return res.json({ id: `${generated_id}` });
     };
