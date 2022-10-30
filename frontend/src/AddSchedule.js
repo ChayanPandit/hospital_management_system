@@ -63,8 +63,6 @@ function tConvert(time) {
 }
 export class AddSchedule extends Component {
     componentDidMount() {
-      id = this.props.match.params.id;
-      console.log(id);
   }
     render() {
         return (
@@ -81,6 +79,7 @@ export class AddSchedule extends Component {
                         fetch("http://localhost:3001/userInSession")
                           .then(res => res.json())
                           .then(res => {
+                            console.log(res);
                             var string_json = JSON.stringify(res);
                             var email_json = JSON.parse(string_json);
                             email_in_use = email_json.email;
@@ -93,8 +92,8 @@ export class AddSchedule extends Component {
                             console.log(bt);
                             console.log(et);
 
-                          fetch("http://localhost:3001/addToschedule?id=" + 
-                          id + "&starttime=" + st + "&endtime=" + 
+                          fetch("http://localhost:3001/addToschedule?email=" + 
+                          email_in_use + "&starttime=" + st + "&endtime=" + 
                           et + "&breaktime=" + bt + "&day=" + value.day).then((x)=>{
                             window.alert("Schedule successfully updated!");
                           });

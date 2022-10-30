@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 30, 2022 at 08:27 AM
+-- Generation Time: Oct 30, 2022 at 12:12 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -61,24 +61,6 @@ CREATE TABLE `diagnose` (
 
 INSERT INTO `diagnose` (`appt`, `doctor`, `diagnosis`, `prescription`) VALUES
 (1, 'sam@gmail.com', ' Sleep man', 'zzzzzzzzzzzz....');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `docshaveschedules`
---
-
-CREATE TABLE `docshaveschedules` (
-  `sched` int(11) NOT NULL,
-  `doctor` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `docshaveschedules`
---
-
-INSERT INTO `docshaveschedules` (`sched`, `doctor`) VALUES
-(1, 'sam@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -151,7 +133,7 @@ INSERT INTO `patientsattendappointments` (`patient`, `appt`, `concerns`, `sympto
 --
 
 CREATE TABLE `schedule` (
-  `id` int(11) NOT NULL,
+  `doctor` varchar(50) NOT NULL,
   `starttime` time NOT NULL,
   `endtime` time NOT NULL,
   `breaktime` time NOT NULL,
@@ -162,11 +144,11 @@ CREATE TABLE `schedule` (
 -- Dumping data for table `schedule`
 --
 
-INSERT INTO `schedule` (`id`, `starttime`, `endtime`, `breaktime`, `day`) VALUES
-(1, '08:00:00', '12:00:00', '10:00:00', 'Monday'),
-(1, '08:00:00', '15:00:00', '11:00:00', 'Wednesday'),
-(1, '08:00:00', '18:00:00', '10:00:00', 'Friday'),
-(1, '16:00:00', '22:00:00', '18:00:00', 'Sunday');
+INSERT INTO `schedule` (`doctor`, `starttime`, `endtime`, `breaktime`, `day`) VALUES
+('sam@gmail.com', '08:00:00', '12:00:00', '10:00:00', 'Monday'),
+('sam@gmail.com', '08:00:00', '15:00:00', '11:00:00', 'Wednesday'),
+('sam@gmail.com', '08:00:00', '18:00:00', '10:00:00', 'Friday'),
+('sam@gmail.com', '16:00:00', '22:00:00', '18:00:00', 'Sunday');
 
 --
 -- Indexes for dumped tables
@@ -184,12 +166,6 @@ ALTER TABLE `appointment`
 ALTER TABLE `diagnose`
   ADD PRIMARY KEY (`appt`,`doctor`),
   ADD KEY `doctor` (`doctor`);
-
---
--- Indexes for table `docshaveschedules`
---
-ALTER TABLE `docshaveschedules`
-  ADD PRIMARY KEY (`sched`,`doctor`);
 
 --
 -- Indexes for table `doctor`
@@ -214,7 +190,7 @@ ALTER TABLE `patientsattendappointments`
 -- Indexes for table `schedule`
 --
 ALTER TABLE `schedule`
-  ADD PRIMARY KEY (`id`,`starttime`,`endtime`,`breaktime`,`day`);
+  ADD PRIMARY KEY (`doctor`,`starttime`,`endtime`,`breaktime`,`day`);
 
 --
 -- Constraints for dumped tables

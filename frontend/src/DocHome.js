@@ -55,12 +55,8 @@ const SidebarButtons = () => {
                                         var email_json = JSON.parse(string_json);
                                         var email_in_use = email_json.email;
                                         console.log(email_in_use);
-                                    fetch("http://localhost:3001/findsched?email=" + email_in_use)
-                                    .then(res => res.json())
-                                    .then(res => {
-                                        console.log(res.data[0].sched);
-                                        window.location = "/AddSchedule/"+res.data[0].sched
-                                    });
+                                    
+                                        window.location = "/AddSchedule"
                                 });
                                 }
                                 else if (label === "Appointments") {

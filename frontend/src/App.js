@@ -75,7 +75,9 @@ export default function App() {
           <Route path="/DocHome">
             <DocHome />
           </Route>
-          <Route path="/AddSchedule/:id" render={props=><AddSchedule {...props} />} />
+          <Route path="/AddSchedule">
+            <AddSchedule />
+          </Route>
           <Route path="/PatientsViewAppt">
             <PatientsViewAppt />
           </Route>

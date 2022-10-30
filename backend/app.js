@@ -10,8 +10,8 @@ var port = 3001
 //Connection Info
 var con = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: '',
+  user: 'hms_admin',
+  password: 'hms',
   database: 'hms',
   multipleStatements: true
 });
@@ -122,12 +122,6 @@ app.get('/makeDocAccount', (req, res) => {
   con.query(sql_statement, function (error, results, fields) {
     if (error) throw error;
     else {
-      let sql_statement = `INSERT INTO DocsHaveSchedules (sched, doctor) 
-                       VALUES ` + `(${schedule}, "${email}")`;
-      console.log(sql_statement);
-      con.query(sql_statement, function(error){
-        if (error) throw error;
-      })
       email_in_use = email;
       password_in_use = password;
       who = 'doc';
@@ -286,9 +280,7 @@ app.get('/checkIfApptExists', (req, res) => {
         if (error) throw error;
         else {
           cond2 = results;
-          statement = `SELECT doctor, starttime, endtime, breaktime, day FROM DocsHaveSchedules 
-          INNER JOIN Schedule ON DocsHaveSchedules.sched=Schedule.id
-          WHERE doctor="${doc_email}" AND 
+          statement = `SELECT doctor, starttime, endtime, breaktime, day FROM Schedule WHERE doctor="${doc_email}" AND 
           day=DAYNAME(${sql_date}) AND 
           (DATE_ADD(${sql_start},INTERVAL +1 HOUR) <= breaktime OR ${sql_start} >= DATE_ADD(breaktime,INTERVAL +1 HOUR));`
           //not in doctor schedule
@@ -440,22 +432,6 @@ app.get('/addToPatientSeeAppt', (req, res) => {
 
 });
 
-//find schedule number of doctor
-app.get('/findsched', (req, res) => {
-  let params = req.query;
-  let email = params.email;
-  let sql_try =  `SELECT sched FROM Docshaveschedules WHERE doctor="${email}"`;
-  console.log(sql_try);
-  con.query(sql_try, function (error, results, fields) {
-    if (error) throw error;
-    else{
-      return res.json({
-        data: results
-      })
-    }
-  });
-});
-
 //Add Schedule of a doctor
 app.get('/addToschedule', (req, res) => {
   let params = req.query;
@@ -463,10 +439,10 @@ app.get('/addToschedule', (req, res) => {
   let endtime = params.endtime;
   let breaktime = params.breaktime;
   let day = params.day;
-  let id = params.id;
+  let email = params.email;
 
-  let sql_try = `INSERT INTO Schedule (id, starttime, endtime, breaktime, day) 
-                 VALUES (${id}, "${starttime}", "${endtime}" , "${breaktime}", "${day}")`;
+  let sql_try = `INSERT INTO Schedule (doctor, starttime, endtime, breaktime, day) 
+                 VALUES ("${email}", "${starttime}", "${endtime}" , "${breaktime}", "${day}")`;
   console.log(sql_try);
   con.query(sql_try, function (error, results, fields) {
     if (error) throw error;
